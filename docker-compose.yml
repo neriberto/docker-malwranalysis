@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+
+  clamd:
+    build : clamav/
+    hostname : clamd
+    container_name : clamd
+    networks:
+      - insecurenet
+    volumes:
+      - socket-volume:/run/clamav/
+
+  viper:
+    image: neriberto/viper
+    hostname : viper
+    container_name : viper
+    networks:
+      - insecurenet
+    ports:
+      - "9090:9090"
+    volumes_from:
+      - clamd:/var/run/clamd
+
+volumes:
+    socket-volume:
+
+networks:
+
+  insecurenet:
+    driver: bridge
