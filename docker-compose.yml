@@ -3,7 +3,7 @@ version: '2'
 services:
 
   clamd:
-    build : clamav/
+    image : neriberto/clamav
     hostname : clamd
     container_name : clamd
     networks:
@@ -12,10 +12,10 @@ services:
       - clamav-config:/etc/clamav/
       - clamav-socket:/run/clamav/
 
-  viper:
+  viper-web:
     image: neriberto/viper
-    hostname : viper
-    container_name : viper
+    hostname: viper-web
+    container_name: viper-web
     networks:
       - insecurenet
     ports:
@@ -25,6 +25,25 @@ services:
     volumes_from:
       - clamd
     command: ./viper-web -H 0.0.0.0 -p 9090
+
+  viper-api:
+    image: neriberto/viper
+    hostname: viper-api
+    container_name: viper-api
+    networks:
+      - insecurenet
+    ports:
+        - "8080:8080"
+    volumes_from:
+      - viper-web
+    command: ./viper-api -H 0.0.0.0 -p 8080
+  hg:
+    build: hg/
+    hostname: hg
+    container_name: hg
+    networks:
+      - insecurenet
+
 
 volumes:
     clamav-config:
