@@ -9,7 +9,8 @@ services:
     networks:
       - insecurenet
     volumes:
-      - socket-volume:/run/clamav/
+      - clamav-config:/etc/clamav/
+      - clamav-socket:/run/clamav/
 
   viper:
     image: neriberto/viper
@@ -19,13 +20,18 @@ services:
       - insecurenet
     ports:
       - "9090:9090"
+    volumes:
+        - viper-config:/home/viper/.viper/
     volumes_from:
-      - clamd:/var/run/clamd
+      - clamd
+    command: ./viper-web -H 0.0.0.0 -p 9090
 
 volumes:
-    socket-volume:
+    clamav-config:
+    clamav-socket:
+    viper-config:
 
 networks:
-
+  default:
   insecurenet:
     driver: bridge
