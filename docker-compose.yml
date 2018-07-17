@@ -2,55 +2,43 @@ version: '2'
 
 services:
 
-  clamd:
-    image : neriberto/clamav
-    hostname : clamd
-    container_name : clamd
-    networks:
-      - insecurenet
-    volumes:
-      - clamav-config:/etc/clamav/
-      - clamav-socket:/run/clamav/
+#  clamd:
+#    image : neriberto/clamav
+#    hostname : clamd
+#    networks:
+#      - vipernet
+#    volumes:
+#      - clamav-config:/etc/clamav/
+#      - clamav-socket:/run/clamav/
 
   viper-web:
-    image: neriberto/viper
+    build: viper/
+    image: neriberto/viper_web
     hostname: viper-web
-    container_name: viper-web
     networks:
-      - insecurenet
+      - vipernet
     ports:
-      - "9090:9090"
+      - "8080:8080"
     volumes:
-        - viper-config:/home/viper/.viper/
-    volumes_from:
-      - clamd
-    command: ./viper-web -H 0.0.0.0 -p 9090
+        - viper-config:/root/.viper/
+        - viper-share:/usr/share/viper
+#    volumes_from:
+#      - clamd
+    command: viper-web -H 0.0.0.0
 
-  viper-api:
-    image: neriberto/viper
-    hostname: viper-api
-    container_name: viper-api
-    networks:
-      - insecurenet
-    ports:
-        - "8080:8080"
-    volumes_from:
-      - viper-web
-    command: ./viper-api -H 0.0.0.0 -p 8080
-  hg:
-    build: hg/
-    hostname: hg
-    container_name: hg
-    networks:
-      - insecurenet
+#  hg:
+#    build: hg/
+#    hostname: hg
+#    networks:
+#      - vipernet
 
 
 volumes:
     clamav-config:
     clamav-socket:
     viper-config:
+    viper-share:
 
 networks:
-  default:
-  insecurenet:
+  vipernet:
     driver: bridge
