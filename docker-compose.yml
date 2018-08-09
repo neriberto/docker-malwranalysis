@@ -11,10 +11,10 @@ services:
 #      - clamav-config:/etc/clamav/
 #      - clamav-socket:/run/clamav/
 
-  viper-web:
+  viperweb:
     build: viper/
-    image: neriberto/viper_web
-    hostname: viper-web
+    image: neriberto/viper:prod
+    hostname: viperweb
     networks:
       - vipernet
     ports:
@@ -25,6 +25,17 @@ services:
 #      - clamd
     command: viper-web -H 0.0.0.0
 
+  nginx:
+     image: nginx
+     ports:
+       - "80:80"
+     volumes:
+       - ./conf.d:/etc/nginx/conf.d
+     networks:
+       - vipernet
+     depends_on:
+       - viperweb
+
 #  hg:
 #    build: hg/
 #    hostname: hg
@@ -33,8 +44,8 @@ services:
 
 
 volumes:
-    clamav-config:
-    clamav-socket:
+    # clamav-config:
+    # clamav-socket:
     viper-config:
 
 networks:
