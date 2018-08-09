@@ -2,7 +2,17 @@ version: '3.3'
 
 services:
 
+#  clamd:
+#    image : neriberto/clamav
+#    hostname : clamd
+#    networks:
+#      - vipernet
+#    volumes:
+#      - clamav-config:/etc/clamav/
+#      - clamav-socket:/run/clamav/
+
   viperweb:
+    build: viper/
     image: neriberto/viper:prod
     hostname: viperweb
     networks:
@@ -11,9 +21,12 @@ services:
       - "8080:8080"
     volumes:
         - viper-config:/root/.viper/
+#    volumes_from:
+#      - clamd
     command: viper-web -H 0.0.0.0
 
   nginx:
+     build: nginx/
      image: neriberto/nginx:viper
      ports:
        - "80:80"
@@ -22,7 +35,16 @@ services:
      depends_on:
        - viperweb
 
+#  hg:
+#    build: hg/
+#    hostname: hg
+#    networks:
+#      - vipernet
+
+
 volumes:
+    # clamav-config:
+    # clamav-socket:
     viper-config:
 
 networks:
