@@ -1,4 +1,4 @@
-FROM neriberto/viper
+FROM neriberto/viper:beta
 
 RUN mkdir -p /root/.viper && \
     cp /usr/share/viper/viper.conf.sample /root/.viper/viper.conf && \
